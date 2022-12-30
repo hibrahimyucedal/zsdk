@@ -312,7 +312,7 @@ public class ZPrinter
                         Bitmap bitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
                         ZebraImageAndroid image = new ZebraImageAndroid(bitmap);
 
-                        printer.printImage(image, bitmap.getWidth()/2+20, 20, bitmap.getWidth()*2, bitmap.getHeight()*2, false);
+                        printer.printImage(image, bitmap.getWidth()/2+20, 20, bitmap.getWidth(), bitmap.getHeight(), false);
                         
                         PrinterResponse response = new PrinterResponse(ErrorCode.SUCCESS,
                                 getStatusInfo(printer), "Successful print");
