@@ -311,7 +311,7 @@ public class ZPrinter
                         // Bitmap Image
                         Bitmap bitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
                         ZebraImageAndroid image = new ZebraImageAndroid(bitmap);
-                        image.scaleImage(bitmap.getWidth()*1.5,bitmap.getHeight()*1.5);
+                        image.scaleImage((int)bitmap.getWidth()*1.5,(int)bitmap.getHeight()*1.5);
 
                         printer.printImage(image, bitmap.getWidth()/2+20, 20, bitmap.getWidth(), bitmap.getHeight(), false);
                         
