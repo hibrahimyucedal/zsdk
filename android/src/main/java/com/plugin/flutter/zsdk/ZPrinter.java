@@ -3,10 +3,12 @@ package com.plugin.flutter.zsdk;
 import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
+import android.graphics.BitmapFactory;
+import android.graphics.Bitmap;
 
-import com.zebra.sdk.comm.Connection;
+import com.zebra.sdk.comm.ConnectionA;
 import com.zebra.sdk.comm.ConnectionException;
-import com.zebra.sdk.comm.TcpConnection;
+import com.zebra.sdk.comm.BluetoothConnection;
 import com.zebra.sdk.graphics.internal.ZebraImageAndroid;
 import com.zebra.sdk.printer.PrinterStatus;
 import com.zebra.sdk.printer.SGD;
@@ -50,11 +52,11 @@ public class ZPrinter
         this.printerConf = printerConf != null ? printerConf : new PrinterConf();
     }
 
-    private TcpConnection newConnection(String address, int tcpPort){
-        return new TcpConnection(address, tcpPort, MAX_TIME_OUT_FOR_READ, TIME_TO_WAIT_FOR_MORE_DATA);
+    private BluetoothConnection newConnection(String address){
+        return new BluetoothConnection(address);
     }
 
-    protected void init(Connection connection){
+    protected void init(ConnectionA connection){
         printerConf.init(connection);
     }
 
@@ -72,15 +74,13 @@ public class ZPrinter
         handler.post(() -> result.error(response.errorCode.name(), response.message, response.toMap()));
     }
 
-    public void doManualCalibrationOverTCPIP(final String address, final Integer port) {
+    public void doManualCalibrationOverBluetooth(final String address) {
         new Thread(() -> {
-            Connection connection;
+            ConnectionA connection;
             ZebraPrinter printer = null;
             try
             {
-                int tcpPort = port != null ? port : TcpConnection.DEFAULT_ZPL_TCP_PORT;
-
-                connection = newConnection(address, tcpPort);
+                connection = newConnection(address);
                 connection.open();
 
                 try {
@@ -109,15 +109,13 @@ public class ZPrinter
         }).start();
     }
 
-    public void printConfigurationLabelOverTCPIP(final String address, final Integer port) {
+    public void printConfigurationLabelOverBluetooth(final String address) {
         new Thread(() -> {
-            Connection connection;
+            ConnectionA connection;
             ZebraPrinter printer = null;
             try
             {
-                int tcpPort = port != null ? port : TcpConnection.DEFAULT_ZPL_TCP_PORT;
-
-                connection = newConnection(address, tcpPort);
+                connection = newConnection(address);
                 connection.open();
 
                 try {
@@ -145,15 +143,13 @@ public class ZPrinter
         }).start();
     }
 
-    public void checkPrinterStatusOverTCPIP(final String address, final Integer port) {
+    public void checkPrinterStatusOverBluetooth(final String address) {
         new Thread(() -> {
-            Connection connection;
+            ConnectionA connection;
             ZebraPrinter printer = null;
             try
             {
-                int tcpPort = port != null ? port : TcpConnection.DEFAULT_ZPL_TCP_PORT;
-
-                connection = newConnection(address, tcpPort);
+                connection = newConnection(address);
                 connection.open();
 
                 try {
@@ -181,15 +177,13 @@ public class ZPrinter
         }).start();
     }
 
-    public void getPrinterSettingsOverTCPIP(final String address, final Integer port) {
+    public void getPrinterSettingsOverBluetooth(final String address) {
         new Thread(() -> {
-            Connection connection;
+            ConnectionA connection;
             ZebraPrinter printer = null;
             try
             {
-                int tcpPort = port != null ? port : TcpConnection.DEFAULT_ZPL_TCP_PORT;
-
-                connection = newConnection(address, tcpPort);
+                connection = newConnection(address);
                 connection.open();
 
                 try {
@@ -216,17 +210,15 @@ public class ZPrinter
         }).start();
     }
 
-    public void setPrinterSettingsOverTCPIP(final String address, final Integer port, final PrinterSettings settings) {
+    public void setPrinterSettingsOverBluetooth(final String address, final PrinterSettings settings) {
         new Thread(() -> {
-            Connection connection;
+            ConnectionA connection;
             ZebraPrinter printer = null;
             try
             {
                 if(settings == null) throw new NullPointerException("Settings can't be null");
 
-                int tcpPort = port != null ? port : TcpConnection.DEFAULT_ZPL_TCP_PORT;
-
-                connection = newConnection(address, tcpPort);
+                connection = newConnection(address);
                 connection.open();
 
                 try {
@@ -253,16 +245,15 @@ public class ZPrinter
         }).start();
     }
 
-    public void printPdfOverTCPIP(final String filePath, final String address, final Integer port) {
+    public void printPdfOverBluetooth(final String filePath, final String address) {
         new Thread(() -> {
-            Connection connection;
+            ConnectionA connection;
             ZebraPrinter printer = null;
             try
             {
                 if(!new File(filePath).exists()) throw new FileNotFoundException("The file: "+ filePath +"doesn't exist");
-                int tcpPort = port != null ? port : TcpConnection.DEFAULT_ZPL_TCP_PORT;
 
-                connection = newConnection(address, tcpPort);
+                connection = newConnection(address);
                 connection.open();
 
                 try {
@@ -302,12 +293,58 @@ public class ZPrinter
         }).start();
     }
 
-    public void printZplFileOverTCPIP(final String filePath, final String address, final Integer port) {
+    public void printImageOverBluetooth(final byte[] bytes, final String address) {
+        new Thread(() -> {
+            ConnectionA connection;
+            ZebraPrinter printer = null;
+            try
+            {
+                connection = newConnection(address);
+                connection.open();
+
+                try {
+                    printer = ZebraPrinterFactory.getInstance(connection);
+                    if (isReadyToPrint(printer)) {
+                        init(connection);
+
+                        Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                        ZebraImageAndroid image = new ZebraImageAndroid(bitmap);
+
+                        printer.printImage(image, 0, 0, -1, -1, false);
+                        
+                        PrinterResponse response = new PrinterResponse(ErrorCode.SUCCESS,
+                                getStatusInfo(printer), "Successful print");
+                        handler.post(() -> result.success(response.toMap()));
+                    } else {
+                        PrinterResponse response = new PrinterResponse(ErrorCode.PRINTER_ERROR,
+                                getStatusInfo(printer), "Printer is not ready");
+                        handler.post(() -> result.error(ErrorCode.PRINTER_ERROR.name(),
+                                response.message, response.toMap()));
+                    }
+
+                }catch(Exception e) {
+                    throw e;
+                } finally {
+                    connection.close();
+                }
+            }
+            catch(ConnectionException e)
+            {
+                onConnectionTimeOut(e);
+            }
+            catch(Exception e)
+            {
+                onException(e, printer);
+            }
+        }).start();
+    }
+
+    public void printZplFileOverBluetooth(final String filePath, final String address) {
         new Thread(() -> {
             try
             {
                 if(!new File(filePath).exists()) throw new FileNotFoundException("The file: "+ filePath +"doesn't exist");
-                doPrintZplDataOverTCPIP(new FileInputStream(filePath), address, port);
+                doPrintZplDataOverBluetooth(new FileInputStream(filePath), address);
             }
             catch(Exception e)
             {
@@ -316,22 +353,21 @@ public class ZPrinter
         }).start();
     }
 
-    public void printZplDataOverTCPIP(final String data, final String address, final Integer port) {
+    public void printZplDataOverBluetooth(final String data, final String address) {
         if(data == null || data.isEmpty()) throw new NullPointerException("ZPL data can not be empty");
-        new Thread(() -> doPrintZplDataOverTCPIP(
-            new ByteArrayInputStream(data.getBytes(Charset.forName("UTF-8"))), address, port))
+        new Thread(() -> doPrintZplDataOverBluetooth(
+            new ByteArrayInputStream(data.getBytes(Charset.forName("UTF-8"))), address))
             .start();
     }
 
-    private void doPrintZplDataOverTCPIP(final InputStream dataStream, final String address, final Integer port) {
-        Connection connection;
+    private void doPrintZplDataOverBluetooth(final InputStream dataStream, final String address) {
+        ConnectionA connection;
         ZebraPrinter printer = null;
         try
         {
             if(dataStream == null) throw new NullPointerException("ZPL data can not be empty");
-            int tcpPort = port != null ? port : TcpConnection.DEFAULT_ZPL_TCP_PORT;
 
-            connection = newConnection(address, tcpPort);
+            connection = newConnection(address);
             connection.open();
 
             try {
@@ -405,7 +441,7 @@ public class ZPrinter
     /**
      * This printMethod implements best practices to check the language of the printer and set the language of the printer to ZPL.
      */
-    public void changePrinterLanguage(Connection connection, String language) throws ConnectionException {
+    public void changePrinterLanguage(ConnectionA connection, String language) throws ConnectionException {
         if(connection == null) return;
         if(!connection.isConnected()) connection.open();
 
@@ -416,11 +452,11 @@ public class ZPrinter
             SGD.SET(SGDParams.KEY_PRINTER_LANGUAGES, language, connection);
     }
 
-    public void printAllValues(Connection connection) throws Exception {
+    public void printAllValues(ConnectionA connection) throws Exception {
         Log.e("allSettingsValues", SGD.GET(SGDParams.VALUE_GET_ALL, connection));
     }
 
-    public void printAllSettings(Connection connection) throws Exception {
+    public void printAllSettings(ConnectionA connection) throws Exception {
         if(connection == null) return;
         if(!connection.isConnected()) connection.open();
         ZebraPrinterLinkOs printerLinkOs = ZebraPrinterFactory.getLinkOsPrinter(connection);
@@ -430,7 +466,7 @@ public class ZPrinter
     }
 
     /** Takes the size of the pdf and the printer's maximum size and scales the file down */
-    private String scalePrint (Connection connection, String filePath) throws Exception
+    private String scalePrint (ConnectionA connection, String filePath) throws Exception
     {
         int fileWidth = PdfUtils.getPageWidth(context, filePath);
         String scale = "dither scale-to-fit";

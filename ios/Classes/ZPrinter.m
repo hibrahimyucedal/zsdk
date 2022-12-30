@@ -7,7 +7,7 @@
 
 #import "ZPrinter.h"
 #import "ZebraPrinterFactory.h"
-#import "TcpPrinterConnection.h"
+#import "BluetoothPrinterConnection.h"
 #import "ErrorCodeUtils.h"
 #import "PrinterResponse.h"
 #import "SGDParams.h"
@@ -16,7 +16,6 @@
 #import "PrinterSettings.h"
 
 @implementation ZPrinter
-const int DEFAULT_ZPL_TCP_PORT = 9100;
 const int MAX_TIME_OUT_FOR_READ = 5000;
 const int TIME_TO_WAIT_FOR_MORE_DATA = 0;
 
@@ -30,8 +29,8 @@ const int TIME_TO_WAIT_FOR_MORE_DATA = 0;
     return self;
 }
 
-+ (TcpPrinterConnection *) initWithAddress:(NSString *)anAddress andWithPort:(NSInteger)aPort {
-    return [[TcpPrinterConnection alloc] initWithAddress:anAddress withPort:aPort withMaxTimeoutForRead:MAX_TIME_OUT_FOR_READ andWithTimeToWaitForMoreData:TIME_TO_WAIT_FOR_MORE_DATA];
++ (BluetoothPrinterConnection *) initWithAddress:(NSString *)anAddress {
+    return [[BluetoothPrinterConnection alloc] initWithAddress:anAddress withMaxTimeoutForRead:MAX_TIME_OUT_FOR_READ andWithTimeToWaitForMoreData:TIME_TO_WAIT_FOR_MORE_DATA];
 }
 
 - (void)initValues:(id<ZebraPrinterConnection,NSObject>)connection{
@@ -51,14 +50,12 @@ const int TIME_TO_WAIT_FOR_MORE_DATA = 0;
     self.result([FlutterError errorWithCode:[response getErrorCode] message: response.message details:[response toMap]]);
 }
 
-- (void)doManualCalibrationOverTCPIP:(NSString *)address port:(NSNumber *)port {
+- (void)doManualCalibrationOverBluetooth:(NSString *)address {
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
         id<ZebraPrinter,NSObject> printer;
         id<ZebraPrinterConnection,NSObject> connection;
         @try {
-            int tcpPort = ![ObjectUtils isNull:port] ? [port intValue] : DEFAULT_ZPL_TCP_PORT;
-            
-            connection = [ZPrinter initWithAddress:address andWithPort:tcpPort];
+            connection = [ZPrinter initWithAddress:address];
             if(![connection open]) return [self onConnectionTimeOut];
             NSError *error = nil;
             @try {
@@ -87,14 +84,12 @@ const int TIME_TO_WAIT_FOR_MORE_DATA = 0;
     });
 }
 
-- (void)printConfigurationLabelOverTCPIP:(NSString *)address port:(NSNumber *)port {
+- (void)printConfigurationLabelOverBluetooth:(NSString *)address {
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
         id<ZebraPrinter,NSObject> printer;
         id<ZebraPrinterConnection,NSObject> connection;
         @try {
-            int tcpPort = ![ObjectUtils isNull:port] ? [port intValue] : DEFAULT_ZPL_TCP_PORT;
-            
-            connection = [ZPrinter initWithAddress:address andWithPort:tcpPort];
+            connection = [ZPrinter initWithAddress:address];
             if(![connection open]) return [self onConnectionTimeOut];
             NSError *error = nil;
             @try {
@@ -122,13 +117,12 @@ const int TIME_TO_WAIT_FOR_MORE_DATA = 0;
     });
 }
 
-- (void)checkPrinterStatusOverTCPIP:(NSString *)address port:(NSNumber *)port {
+- (void)checkPrinterStatusOverBluetooth:(NSString *)address {
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
         id<ZebraPrinter,NSObject> printer;
         id<ZebraPrinterConnection,NSObject> connection;
         @try {
-            int tcpPort = ![ObjectUtils isNull:port] ? [port intValue] : DEFAULT_ZPL_TCP_PORT;
-            connection = [ZPrinter initWithAddress:address andWithPort:tcpPort];
+            connection = [ZPrinter initWithAddress:address];
             if(![connection open]) return [self onConnectionTimeOut];
             NSError *error = nil;
             @try {
@@ -149,14 +143,12 @@ const int TIME_TO_WAIT_FOR_MORE_DATA = 0;
     });
 }
 
-- (void)getPrinterSettingsOverTCPIP:(NSString *)address port:(NSNumber *)port {
+- (void)getPrinterSettingsOverBluetooth:(NSString *)address {
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
         id<ZebraPrinter,NSObject> printer;
         id<ZebraPrinterConnection,NSObject> connection;
         @try {
-            int tcpPort = ![ObjectUtils isNull:port] ? [port intValue] : DEFAULT_ZPL_TCP_PORT;
-            
-            connection = [ZPrinter initWithAddress:address andWithPort:tcpPort];
+            connection = [ZPrinter initWithAddress:address];
             if(![connection open]) return [self onConnectionTimeOut];
             NSError *error = nil;
             @try {
@@ -178,7 +170,7 @@ const int TIME_TO_WAIT_FOR_MORE_DATA = 0;
     });
 }
 
-- (void)setPrinterSettingsOverTCPIP:(NSString *)address port:(NSNumber *)port settings:(PrinterSettings *)settings {
+- (void)setPrinterSettingsOverBluetooth:(NSString *)address settings:(PrinterSettings *)settings {
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
         id<ZebraPrinter,NSObject> printer;
         id<ZebraPrinterConnection,NSObject> connection;
@@ -187,9 +179,7 @@ const int TIME_TO_WAIT_FOR_MORE_DATA = 0;
             if([ObjectUtils isNull:settings])
                 @throw [NSException exceptionWithName:@"Printer Error" reason:@"Settings can't be null" userInfo:nil];
             
-            int tcpPort = ![ObjectUtils isNull:port] ? [port intValue] : DEFAULT_ZPL_TCP_PORT;
-            
-            connection = [ZPrinter initWithAddress:address andWithPort:tcpPort];
+            connection = [ZPrinter initWithAddress:address];
             if(![connection open]) return [self onConnectionTimeOut];
             NSError *error = nil;
             @try {
@@ -212,18 +202,18 @@ const int TIME_TO_WAIT_FOR_MORE_DATA = 0;
     });
 }
 
-- (void)printZplFileOverTCPIP:(NSString *)filePath address:(NSString *)address port:(NSNumber*)port {
+- (void)printZplFileOverBluetooth:(NSString *)filePath address:(NSString *)address {
     //check if file exist.
     //Extract data from file
-    //call printZplDataOverTCPIP passing the extracted data from file
+    //call printZplDataOverBluetooth passing the extracted data from file
     self.result(FlutterMethodNotImplemented);
 }
 
-- (void)printZplDataOverTCPIP:(NSString *)data address:(NSString *)address port:(NSNumber*)port {
-    [self doPrintZplDataOverTCPIP:data address:address port:port];
+- (void)printZplDataOverBluetooth:(NSString *)data address:(NSString *)address {
+    [self doPrintZplDataOverBluetooth:data address:address];
 }
 
-- (void) doPrintZplDataOverTCPIP:(NSString *)data address:(NSString *)address port:(NSNumber*)port; {
+- (void) doPrintZplDataOverBluetooth:(NSString *)data address:(NSString *)address {
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
         id<ZebraPrinter,NSObject> printer;
         id<ZebraPrinterConnection,NSObject> connection;
@@ -231,9 +221,7 @@ const int TIME_TO_WAIT_FOR_MORE_DATA = 0;
             if([ObjectUtils isNull:data])
                 @throw [NSException exceptionWithName:@"Printer Error" reason:@"ZPL data can not be empty" userInfo:nil];
 
-            int tcpPort = ![ObjectUtils isNull:port] ? [port intValue] : DEFAULT_ZPL_TCP_PORT;
-            
-            connection = [ZPrinter initWithAddress:address andWithPort:tcpPort];
+            connection = [ZPrinter initWithAddress:address];
             if(![connection open]) return [self onConnectionTimeOut];
             NSError *error = nil;
             @try {

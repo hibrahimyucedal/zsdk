@@ -26,8 +26,6 @@ export 'package:zsdk/src/status_info.dart';
 export 'package:zsdk/src/enumerators/zpl_mode.dart';
 
 class ZSDK {
-  static const int DEFAULT_ZPL_TCP_PORT = 9100;
-
   ///In seconds
   static const int DEFAULT_CONNECTION_TIMEOUT = 10;
 
@@ -35,26 +33,27 @@ class ZSDK {
   static const String _METHOD_CHANNEL = "zsdk";
 
   /// Methods
-  static const String _PRINT_PDF_FILE_OVER_TCP_IP = "printPdfFileOverTCPIP";
-  static const String _PRINT_PDF_DATA_OVER_TCP_IP = "printPdfDataOverTCPIP";
-  static const String _PRINT_ZPL_FILE_OVER_TCP_IP = "printZplFileOverTCPIP";
-  static const String _PRINT_ZPL_DATA_OVER_TCP_IP = "printZplDataOverTCPIP";
-  static const String _CHECK_PRINTER_STATUS_OVER_TCP_IP =
-      "checkPrinterStatusOverTCPIP";
-  static const String _GET_PRINTER_SETTINGS_OVER_TCP_IP =
-      "getPrinterSettingsOverTCPIP";
-  static const String _SET_PRINTER_SETTINGS_OVER_TCP_IP =
-      "setPrinterSettingsOverTCPIP";
-  static const String _DO_MANUAL_CALIBRATION_OVER_TCP_IP =
-      "doManualCalibrationOverTCPIP";
-  static const String _PRINT_CONFIGURATION_LABEL_OVER_TCP_IP =
-      "printConfigurationLabelOverTCPIP";
+  static const String _PRINT_PDF_FILE_OVER_BLUETOOTH = "printPdfFileOverBluetooth";
+  static const String _PRINT_IMAGE_OVER_BLUETOOTH = "printImageOverBluetooth";
+  static const String _PRINT_PDF_DATA_OVER_BLUETOOTH = "printPdfDataOverBluetooth";
+  static const String _PRINT_ZPL_FILE_OVER_BLUETOOTH = "printZplFileOverBluetooth";
+  static const String _PRINT_ZPL_DATA_OVER_BLUETOOTH = "printZplDataOverBluetooth";
+  static const String _CHECK_PRINTER_STATUS_OVER_BLUETOOTH =
+      "checkPrinterStatusOverBluetooth";
+  static const String _GET_PRINTER_SETTINGS_OVER_BLUETOOTH =
+      "getPrinterSettingsOverBluetooth";
+  static const String _SET_PRINTER_SETTINGS_OVER_BLUETOOTH =
+      "setPrinterSettingsOverBluetooth";
+  static const String _DO_MANUAL_CALIBRATION_OVER_BLUETOOTH =
+      "doManualCalibrationOverBluetooth";
+  static const String _PRINT_CONFIGURATION_LABEL_OVER_BLUETOOTH =
+      "printConfigurationLabelOverBluetooth";
 
   /// Properties
   static const String _filePath = "filePath";
   static const String _data = "data";
   static const String _address = "address";
-  static const String _port = "port";
+  static const String _bytes = "bytes";
   static const String _cmWidth = "cmWidth";
   static const String _cmHeight = "cmHeight";
   static const String _orientation = "orientation";
@@ -92,105 +91,121 @@ class ZSDK {
         ),
       ).toMap());
 
-  Future doManualCalibrationOverTCPIP(
-          {required String address, int? port, Duration? timeout}) =>
-      _channel.invokeMethod(_DO_MANUAL_CALIBRATION_OVER_TCP_IP, {
-        _address: address,
-        _port: port,
+  Future doManualCalibrationOverBluetooth(
+          {required String address, Duration? timeout}) =>
+      _channel.invokeMethod(_DO_MANUAL_CALIBRATION_OVER_BLUETOOTH, {
+        _address: address
       }).timeout(
           timeout ??= const Duration(seconds: DEFAULT_CONNECTION_TIMEOUT),
           onTimeout: () => _onTimeout(timeout: timeout));
 
-  Future printConfigurationLabelOverTCPIP(
-          {required String address, int? port, Duration? timeout}) =>
-      _channel.invokeMethod(_PRINT_CONFIGURATION_LABEL_OVER_TCP_IP, {
+  Future printConfigurationLabelOverBluetooth(
+          {required String address, Duration? timeout}) =>
+      _channel.invokeMethod(_PRINT_CONFIGURATION_LABEL_OVER_BLUETOOTH, {
         _address: address,
-        _port: port,
       }).timeout(
           timeout ??= const Duration(seconds: DEFAULT_CONNECTION_TIMEOUT),
           onTimeout: () => _onTimeout(timeout: timeout));
 
-  Future checkPrinterStatusOverTCPIP(
-          {required String address, int? port, Duration? timeout}) =>
-      _channel.invokeMethod(_CHECK_PRINTER_STATUS_OVER_TCP_IP, {
-        _address: address,
-        _port: port,
+  Future checkPrinterStatusOverBluetooth(
+          {required String address, Duration? timeout}) =>
+      _channel.invokeMethod(_CHECK_PRINTER_STATUS_OVER_BLUETOOTH, {
+        _address: address
       }).timeout(
           timeout ??= const Duration(seconds: DEFAULT_CONNECTION_TIMEOUT),
           onTimeout: () => _onTimeout(timeout: timeout));
 
-  Future getPrinterSettingsOverTCPIP(
-          {required String address, int? port, Duration? timeout}) =>
-      _channel.invokeMethod(_GET_PRINTER_SETTINGS_OVER_TCP_IP, {
-        _address: address,
-        _port: port,
+  Future getPrinterSettingsOverBluetooth(
+          {required String address, Duration? timeout}) =>
+      _channel.invokeMethod(_GET_PRINTER_SETTINGS_OVER_BLUETOOTH, {
+        _address: address
       }).timeout(
           timeout ??= const Duration(seconds: DEFAULT_CONNECTION_TIMEOUT),
           onTimeout: () => _onTimeout(timeout: timeout));
 
-  Future setPrinterSettingsOverTCPIP(
+  Future setPrinterSettingsOverBluetooth(
           {required PrinterSettings settings,
           required String address,
-          int? port,
           Duration? timeout}) =>
       _channel
           .invokeMethod(
-              _SET_PRINTER_SETTINGS_OVER_TCP_IP,
+              _SET_PRINTER_SETTINGS_OVER_BLUETOOTH,
               {
-                _address: address,
-                _port: port,
+                _address: address as dynamic
               }..addAll(settings.toMap()))
           .timeout(
               timeout ??= const Duration(seconds: DEFAULT_CONNECTION_TIMEOUT),
               onTimeout: () => _onTimeout(timeout: timeout));
 
-  Future resetPrinterSettingsOverTCPIP(
-          {required String address, int? port, Duration? timeout}) =>
-      setPrinterSettingsOverTCPIP(
+  Future resetPrinterSettingsOverBluetooth(
+          {required String address,Duration? timeout}) =>
+      setPrinterSettingsOverBluetooth(
           settings: PrinterSettings.defaultSettings(),
           address: address,
-          port: port,
           timeout: timeout);
 
-  Future printPdfFileOverTCPIP(
+  Future printPdfFileOverBluetooth(
           {required String filePath,
           required String address,
-          int? port,
           PrinterConf? printerConf,
           Duration? timeout}) =>
-      _printFileOverTCPIP(
-          method: _PRINT_PDF_FILE_OVER_TCP_IP,
+      _printFileOverBluetooth(
+          method: _PRINT_PDF_FILE_OVER_BLUETOOTH,
           filePath: filePath,
           address: address,
-          port: port,
           printerConf: printerConf,
           timeout: timeout);
 
-  Future printZplFileOverTCPIP(
-          {required String filePath,
+          Future printImageOverBluetooth(
+          {required List<int> bytes,
           required String address,
-          int? port,
           PrinterConf? printerConf,
           Duration? timeout}) =>
-      _printFileOverTCPIP(
-          method: _PRINT_ZPL_FILE_OVER_TCP_IP,
-          filePath: filePath,
+      _printImageOverBluetooth(
+          method: _PRINT_IMAGE_OVER_BLUETOOTH,
+          bytes: bytes,
           address: address,
-          port: port,
           printerConf: printerConf,
           timeout: timeout);
 
-  Future _printFileOverTCPIP(
+  Future printZplFileOverBluetooth(
+          {required String filePath,
+          required String address,
+          PrinterConf? printerConf,
+          Duration? timeout}) =>
+      _printFileOverBluetooth(
+          method: _PRINT_ZPL_FILE_OVER_BLUETOOTH,
+          filePath: filePath,
+          address: address,
+          printerConf: printerConf,
+          timeout: timeout);
+
+  Future _printImageOverBluetooth(
+          {required method,
+          required List<int> bytes,
+          required String address,
+          PrinterConf? printerConf,
+          Duration? timeout}) =>
+      _channel.invokeMethod(method, {
+        _bytes: bytes,
+        _address: address,
+        _cmWidth: printerConf?.cmWidth,
+        _cmHeight: printerConf?.cmHeight,
+        _dpi: printerConf?.dpi,
+        _orientation: printerConf?.orientation?.name,
+      }).timeout(
+          timeout ??= const Duration(seconds: DEFAULT_CONNECTION_TIMEOUT),
+          onTimeout: () => _onTimeout(timeout: timeout));
+  
+  Future _printFileOverBluetooth(
           {required method,
           required String filePath,
           required String address,
-          int? port,
           PrinterConf? printerConf,
           Duration? timeout}) =>
       _channel.invokeMethod(method, {
         _filePath: filePath,
         _address: address,
-        _port: port,
         _cmWidth: printerConf?.cmWidth,
         _cmHeight: printerConf?.cmHeight,
         _dpi: printerConf?.dpi,
@@ -199,45 +214,39 @@ class ZSDK {
           timeout ??= const Duration(seconds: DEFAULT_CONNECTION_TIMEOUT),
           onTimeout: () => _onTimeout(timeout: timeout));
 
-  Future printPdfDataOverTCPIP(
+  Future printPdfDataOverBluetooth(
           {required ByteData data,
           required String address,
-          int? port,
           PrinterConf? printerConf,
           Duration? timeout}) =>
-      _printDataOverTCPIP(
-          method: _PRINT_PDF_DATA_OVER_TCP_IP,
+      _printDataOverBluetooth(
+          method: _PRINT_PDF_DATA_OVER_BLUETOOTH,
           data: data,
           address: address,
-          port: port,
           printerConf: printerConf,
           timeout: timeout);
 
-  Future printZplDataOverTCPIP(
+  Future printZplDataOverBluetooth(
           {required String data,
           required String address,
-          int? port,
           PrinterConf? printerConf,
           Duration? timeout}) =>
-      _printDataOverTCPIP(
-          method: _PRINT_ZPL_DATA_OVER_TCP_IP,
+      _printDataOverBluetooth(
+          method: _PRINT_ZPL_DATA_OVER_BLUETOOTH,
           data: data,
           address: address,
-          port: port,
           printerConf: printerConf,
           timeout: timeout);
 
-  Future _printDataOverTCPIP(
+  Future _printDataOverBluetooth(
           {required method,
           required dynamic data,
           required String address,
-          int? port,
           PrinterConf? printerConf,
           Duration? timeout}) =>
       _channel.invokeMethod(method, {
         _data: data,
         _address: address,
-        _port: port,
         _cmWidth: printerConf?.cmWidth,
         _cmHeight: printerConf?.cmHeight,
         _dpi: printerConf?.dpi,

@@ -1,6 +1,6 @@
 package com.plugin.flutter.zsdk;
 
-import com.zebra.sdk.comm.Connection;
+import com.zebra.sdk.comm.ConnectionA;
 import com.zebra.sdk.printer.SGD;
 
 /**
@@ -23,7 +23,7 @@ public class PrinterConf {
         this.orientation = orientation != null ? orientation : Orientation.LANDSCAPE;
     }
 
-    protected void init(Connection connection){
+    protected void init(ConnectionA connection){
         if(dpi == null && connection != null) {
             try {
                 if(!connection.isConnected()) connection.open();

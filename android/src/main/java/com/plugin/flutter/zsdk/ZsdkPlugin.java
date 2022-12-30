@@ -43,21 +43,22 @@ public class ZsdkPlugin implements FlutterPlugin, MethodCallHandler {
   static final String _METHOD_CHANNEL = "zsdk";
 
   /** Methods */
-  static final String _PRINT_PDF_FILE_OVER_TCP_IP = "printPdfFileOverTCPIP";
-  static final String _PRINT_PDF_DATA_OVER_TCP_IP = "printPdfDataOverTCPIP";
-  static final String _PRINT_ZPL_FILE_OVER_TCP_IP = "printZplFileOverTCPIP";
-  static final String _PRINT_ZPL_DATA_OVER_TCP_IP = "printZplDataOverTCPIP";
-  static final String _CHECK_PRINTER_STATUS_OVER_TCP_IP = "checkPrinterStatusOverTCPIP";
-  static final String _GET_PRINTER_SETTINGS_OVER_TCP_IP = "getPrinterSettingsOverTCPIP";
-  static final String _SET_PRINTER_SETTINGS_OVER_TCP_IP = "setPrinterSettingsOverTCPIP";
-  static final String _DO_MANUAL_CALIBRATION_OVER_TCP_IP = "doManualCalibrationOverTCPIP";
-  static final String _PRINT_CONFIGURATION_LABEL_OVER_TCP_IP = "printConfigurationLabelOverTCPIP";
+  static final String _PRINT_PDF_FILE_OVER_BLUETOOTH = "printPdfFileOverBluetooth";
+  static final String _PRINT_IMAGE_OVER_BLUETOOTH = "printImageOverBluetooth";
+  static final String _PRINT_PDF_DATA_OVER_BLUETOOTH = "printPdfDataOverBluetooth";
+  static final String _PRINT_ZPL_FILE_OVER_BLUETOOTH = "printZplFileOverBluetooth";
+  static final String _PRINT_ZPL_DATA_OVER_BLUETOOTH = "printZplDataOverBluetooth";
+  static final String _CHECK_PRINTER_STATUS_OVER_BLUETOOTH = "checkPrinterStatusOverBluetooth";
+  static final String _GET_PRINTER_SETTINGS_OVER_BLUETOOTH = "getPrinterSettingsOverBluetooth";
+  static final String _SET_PRINTER_SETTINGS_OVER_BLUETOOTH = "setPrinterSettingsOverBluetooth";
+  static final String _DO_MANUAL_CALIBRATION_OVER_BLUETOOTH = "doManualCalibrationOverBluetooth";
+  static final String _PRINT_CONFIGURATION_LABEL_OVER_BLUETOOTH = "printConfigurationLabelOverBluetooth";
 
   /** Properties */
   static final String _filePath = "filePath";
   static final String _data = "data";
   static final String _address = "address";
-  static final String _port = "port";
+  static final String _bytes = "bytes";
   static final String _cmWidth = "cmWidth";
   static final String _cmHeight = "cmHeight";
   static final String _orientation = "orientation";
@@ -93,59 +94,56 @@ public class ZsdkPlugin implements FlutterPlugin, MethodCallHandler {
           )
       );
       switch(call.method){
-        case _DO_MANUAL_CALIBRATION_OVER_TCP_IP:
-          printer.doManualCalibrationOverTCPIP(
-              call.argument(_address),
-              call.argument(_port)
+        case _DO_MANUAL_CALIBRATION_OVER_BLUETOOTH:
+          printer.doManualCalibrationOverBluetooth(
+              call.argument(_address)
           );
           break;
-        case _PRINT_CONFIGURATION_LABEL_OVER_TCP_IP:
-          printer.printConfigurationLabelOverTCPIP(
-              call.argument(_address),
-              call.argument(_port)
+        case _PRINT_CONFIGURATION_LABEL_OVER_BLUETOOTH:
+          printer.printConfigurationLabelOverBluetooth(
+              call.argument(_address)
           );
           break;
-        case _CHECK_PRINTER_STATUS_OVER_TCP_IP:
-          printer.checkPrinterStatusOverTCPIP(
-              call.argument(_address),
-              call.argument(_port)
+        case _CHECK_PRINTER_STATUS_OVER_BLUETOOTH:
+          printer.checkPrinterStatusOverBluetooth(
+              call.argument(_address)
           );
           break;
-        case _GET_PRINTER_SETTINGS_OVER_TCP_IP:
-          printer.getPrinterSettingsOverTCPIP(
-              call.argument(_address),
-              call.argument(_port)
+        case _GET_PRINTER_SETTINGS_OVER_BLUETOOTH:
+          printer.getPrinterSettingsOverBluetooth(
+              call.argument(_address)
           );
           break;
-        case _SET_PRINTER_SETTINGS_OVER_TCP_IP:
-          printer.setPrinterSettingsOverTCPIP(
+        case _SET_PRINTER_SETTINGS_OVER_BLUETOOTH:
+          printer.setPrinterSettingsOverBluetooth(
               call.argument(_address),
-              call.argument(_port),
               new PrinterSettings(call.arguments())
           );
           break;
-        case _PRINT_PDF_FILE_OVER_TCP_IP:
-          printer.printPdfOverTCPIP(
+        case _PRINT_PDF_FILE_OVER_BLUETOOTH:
+          printer.printPdfOverBluetooth(
               call.argument(_filePath),
-              call.argument(_address),
-              call.argument(_port)
+              call.argument(_address)
+          );
+          case _PRINT_IMAGE_OVER_BLUETOOTH:
+          printer.printPdfOverBluetooth(
+              call.argument(_bytes),
+              call.argument(_address)
           );
           break;
-        case _PRINT_ZPL_FILE_OVER_TCP_IP:
-          printer.printZplFileOverTCPIP(
+        case _PRINT_ZPL_FILE_OVER_BLUETOOTH:
+          printer.printZplFileOverBluetooth(
               call.argument(_filePath),
-              call.argument(_address),
-              call.argument(_port)
+              call.argument(_address)
           );
           break;
-        case _PRINT_ZPL_DATA_OVER_TCP_IP:
-          printer.printZplDataOverTCPIP(
+        case _PRINT_ZPL_DATA_OVER_BLUETOOTH:
+          printer.printZplDataOverBluetooth(
               call.argument(_data),
-              call.argument(_address),
-              call.argument(_port)
+              call.argument(_address)
           );
           break;
-        case _PRINT_PDF_DATA_OVER_TCP_IP:
+        case _PRINT_PDF_DATA_OVER_BLUETOOTH:
         default:
           result.notImplemented();
       }

@@ -4,7 +4,7 @@
 #import "ZebraPrinter.h"
 #import "ZebraPrinterFactory.h"
 #import "ZebraPrinterConnection.h"
-#import "TcpPrinterConnection.h"
+#import "BluetoothPrinterConnection.h"
 #import "SGD.h"
 
 #import "CauseUtils.h"
@@ -26,21 +26,20 @@
 NSString* _METHOD_CHANNEL = @"zsdk";
 
 /* Methods */
-NSString* _PRINT_PDF_FILE_OVER_TCP_IP = @"printPdfFileOverTCPIP";
-NSString* _PRINT_PDF_DATA_OVER_TCP_IP = @"printPdfDataOverTCPIP";
-NSString* _PRINT_ZPL_FILE_OVER_TCP_IP = @"printZplFileOverTCPIP";
-NSString* _PRINT_ZPL_DATA_OVER_TCP_IP = @"printZplDataOverTCPIP";
-NSString* _CHECK_PRINTER_STATUS_OVER_TCP_IP = @"checkPrinterStatusOverTCPIP";
-NSString* _GET_PRINTER_SETTINGS_OVER_TCP_IP = @"getPrinterSettingsOverTCPIP";
-NSString* _SET_PRINTER_SETTINGS_OVER_TCP_IP = @"setPrinterSettingsOverTCPIP";
-NSString* _DO_MANUAL_CALIBRATION_OVER_TCP_IP = @"doManualCalibrationOverTCPIP";
-NSString* _PRINT_CONFIGURATION_LABEL_OVER_TCP_IP = @"printConfigurationLabelOverTCPIP";
+NSString* _PRINT_PDF_FILE_OVER_BLUETOOTH = @"printPdfFileOverBluetooth";
+NSString* _PRINT_PDF_DATA_OVER_BLUETOOTH = @"printPdfDataOverBluetooth";
+NSString* _PRINT_ZPL_FILE_OVER_BLUETOOTH = @"printZplFileOverBluetooth";
+NSString* _PRINT_ZPL_DATA_OVER_BLUETOOTH = @"printZplDataOverBluetooth";
+NSString* _CHECK_PRINTER_STATUS_OVER_BLUETOOTH = @"checkPrinterStatusOverBluetooth";
+NSString* _GET_PRINTER_SETTINGS_OVER_BLUETOOTH = @"getPrinterSettingsOverBluetooth";
+NSString* _SET_PRINTER_SETTINGS_OVER_BLUETOOTH = @"setPrinterSettingsOverBluetooth";
+NSString* _DO_MANUAL_CALIBRATION_OVER_BLUETOOTH = @"doManualCalibrationOverBluetooth";
+NSString* _PRINT_CONFIGURATION_LABEL_OVER_BLUETOOTH = @"printConfigurationLabelOverBluetooth";
 
 /* Properties */
 NSString* _filePath = @"filePath";
 NSString* _data = @"data";
 NSString* _address = @"address";
-NSString* _port = @"port";
 NSString* _cmWidth = @"cmWidth";
 NSString* _cmHeight = @"cmHeight";
 NSString* _orientation = @"orientation";
@@ -157,7 +156,7 @@ NSString* _dpi = @"dpi";
 }
 - (void)test:(FlutterResult)result {
     @try {
-        id<ZebraPrinterConnection,NSObject> connection = [[TcpPrinterConnection alloc] initWithAddress:@"10.0.1.100" andWithPort:9100];
+        id<ZebraPrinterConnection,NSObject> connection = [[BluetoothPrinterConnection alloc] initWithAddress:@"10.0.1.100"];
         [connection open];
         PrinterConf *printerConf = [[PrinterConf alloc] initWithCmWidth:nil cmHeight:nil dpi:nil orientation:nil];
         
@@ -188,20 +187,20 @@ NSString* _dpi = @"dpi";
                                            ]
                               ];
         
-        if ([_DO_MANUAL_CALIBRATION_OVER_TCP_IP isEqualToString:call.method])
-            [printer doManualCalibrationOverTCPIP:arguments[_address] port:arguments[_port]];
-        else if ([_PRINT_CONFIGURATION_LABEL_OVER_TCP_IP isEqualToString:call.method])
-            [printer printConfigurationLabelOverTCPIP:arguments[_address] port:arguments[_port]];
-        else if ([_CHECK_PRINTER_STATUS_OVER_TCP_IP isEqualToString:call.method])
-            [printer checkPrinterStatusOverTCPIP:arguments[_address] port:arguments[_port]];
-        else if ([_GET_PRINTER_SETTINGS_OVER_TCP_IP isEqualToString:call.method])
-            [printer getPrinterSettingsOverTCPIP:arguments[_address] port:arguments[_port]];
-        else if ([_SET_PRINTER_SETTINGS_OVER_TCP_IP isEqualToString:call.method])
-            [printer setPrinterSettingsOverTCPIP:arguments[_address] port:arguments[_port] settings:[[PrinterSettings alloc] initWithArguments:arguments]];
-        else if ([_PRINT_ZPL_FILE_OVER_TCP_IP isEqualToString:call.method])
-           [printer printZplFileOverTCPIP:arguments[_filePath] address:arguments[_address] port:arguments[_port]];
-        else if ([_PRINT_ZPL_DATA_OVER_TCP_IP isEqualToString:call.method])
-            [printer printZplDataOverTCPIP:arguments[_data] address:arguments[_address] port:arguments[_port]];
+        if ([_DO_MANUAL_CALIBRATION_OVER_BLUETOOTH isEqualToString:call.method])
+            [printer doManualCalibrationOverBluetooth:arguments[_address]];
+        else if ([_PRINT_CONFIGURATION_LABEL_OVER_BLUETOOTH isEqualToString:call.method])
+            [printer printConfigurationLabelOverBluetooth:arguments[_address]];
+        else if ([_CHECK_PRINTER_STATUS_OVER_BLUETOOTH isEqualToString:call.method])
+            [printer checkPrinterStatusOverBluetooth:arguments[_address]];
+        else if ([_GET_PRINTER_SETTINGS_OVER_BLUETOOTH isEqualToString:call.method])
+            [printer getPrinterSettingsOverBluetooth:arguments[_address]];
+        else if ([_SET_PRINTER_SETTINGS_OVER_BLUETOOTH isEqualToString:call.method])
+            [printer setPrinterSettingsOverBluetooth:arguments[_address] settings:[[PrinterSettings alloc] initWithArguments:arguments]];
+        else if ([_PRINT_ZPL_FILE_OVER_BLUETOOTH isEqualToString:call.method])
+           [printer printZplFileOverBluetooth:arguments[_filePath] address:arguments[_address]];
+        else if ([_PRINT_ZPL_DATA_OVER_BLUETOOTH isEqualToString:call.method])
+            [printer printZplDataOverBluetooth:arguments[_data] address:arguments[_address]];
         else result(FlutterMethodNotImplemented);
     } @catch (NSException *e) {
         StatusInfo *statusInfo = [[StatusInfo alloc] init:UNKNOWN_STATUS cause:UNKNOWN_CAUSE];

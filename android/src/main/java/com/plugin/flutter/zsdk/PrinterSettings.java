@@ -1,6 +1,6 @@
 package com.plugin.flutter.zsdk;
 
-import com.zebra.sdk.comm.Connection;
+import com.zebra.sdk.comm.ConnectionA;
 import com.zebra.sdk.printer.SGD;
 
 import java.util.HashMap;
@@ -102,7 +102,7 @@ public class PrinterSettings
         this.devicePrintHeadResolution = devicePrintHeadResolution;
     }
 
-    public void apply(Connection connection){
+    public void apply(ConnectionA connection){
         if(connection != null) {
             try {
                 if(!connection.isConnected()) connection.open();
@@ -154,7 +154,7 @@ public class PrinterSettings
         return map;
     }
 
-    public static PrinterSettings get(Connection connection){
+    public static PrinterSettings get(ConnectionA connection){
         PrinterSettings settings = null;
 
         if(connection != null) {

@@ -11,9 +11,9 @@ void main() {
   ));
 }
 
-const String btnPrintPdfFileOverTCPIP = 'btnPrintPdfFileOverTCPIP';
-const String btnPrintZplFileOverTCPIP = 'btnPrintZplFileOverTCPIP';
-const String btnPrintZplDataOverTCPIP = 'btnPrintZplDataOverTCPIP';
+const String btnPrintPdfFileOverBluetooth = 'btnPrintPdfFileOverBluetooth';
+const String btnPrintZplFileOverBluetooth = 'btnPrintZplFileOverBluetooth';
+const String btnPrintZplDataOverBluetooth = 'btnPrintZplDataOverBluetooth';
 const String btnCheckPrinterStatus = 'btnCheckPrinterStatus';
 const String btnGetPrinterSettings = 'btnGetPrinterSettings';
 const String btnSetPrinterSettings = 'btnSetPrinterSettings';
@@ -142,7 +142,7 @@ class _MyAppState extends State<MyApp> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               const Text(
-                'Print file over TCP/IP',
+                'Print file over Bluetooth',
                 style: TextStyle(fontSize: 18),
               ),
               const Divider(
@@ -842,7 +842,7 @@ class _MyAppState extends State<MyApp> {
                               const TextStyle(color: Colors.white))),
                       onPressed: printStatus == PrintStatus.PRINTING
                           ? null
-                          : () => onClick(btnPrintZplFileOverTCPIP),
+                          : () => onClick(btnPrintZplFileOverBluetooth),
                     ),
                   ),
                   const VerticalDivider(
@@ -861,7 +861,7 @@ class _MyAppState extends State<MyApp> {
                               const TextStyle(color: Colors.white))),
                       onPressed: printStatus == PrintStatus.PRINTING
                           ? null
-                          : () => onClick(btnPrintPdfFileOverTCPIP),
+                          : () => onClick(btnPrintPdfFileOverBluetooth),
                     ),
                   ),
                 ],
@@ -878,7 +878,7 @@ class _MyAppState extends State<MyApp> {
                         const TextStyle(color: Colors.white))),
                 onPressed: printStatus == PrintStatus.PRINTING
                     ? null
-                    : () => onClick(btnPrintZplDataOverTCPIP),
+                    : () => onClick(btnPrintZplDataOverBluetooth),
               ),
               const SizedBox(
                 height: 100,
@@ -972,9 +972,8 @@ class _MyAppState extends State<MyApp> {
             calibrationStatus = CalibrationStatus.CALIBRATING;
           });
           widget.zsdk
-              .doManualCalibrationOverTCPIP(
+              .doManualCalibrationOverBluetooth(
             address: addressIpController.text,
-            port: int.tryParse(addressPortController.text),
           )
               .then((value) {
             setState(() {
@@ -1011,9 +1010,8 @@ class _MyAppState extends State<MyApp> {
             settingsStatus = SettingsStatus.GETTING;
           });
           widget.zsdk
-              .getPrinterSettingsOverTCPIP(
+              .getPrinterSettingsOverBluetooth(
             address: addressIpController.text,
-            port: int.tryParse(addressPortController.text),
           )
               .then((value) {
             setState(() {
@@ -1051,9 +1049,8 @@ class _MyAppState extends State<MyApp> {
             settingsStatus = SettingsStatus.SETTING;
           });
           widget.zsdk
-              .setPrinterSettingsOverTCPIP(
+              .setPrinterSettingsOverBluetooth(
                   address: addressIpController.text,
-                  port: int.tryParse(addressPortController.text),
                   settings: Printer.PrinterSettings(
                     darkness: double.tryParse(darknessController.text),
                     printSpeed: double.tryParse(printSpeedController.text),
@@ -1143,9 +1140,8 @@ class _MyAppState extends State<MyApp> {
             settingsStatus = SettingsStatus.SETTING;
           });
           widget.zsdk
-              .setPrinterSettingsOverTCPIP(
+              .setPrinterSettingsOverBluetooth(
                   address: addressIpController.text,
-                  port: int.tryParse(addressPortController.text),
                   settings: Printer.PrinterSettings.defaultSettings())
               .then((value) {
             setState(() {
@@ -1183,9 +1179,8 @@ class _MyAppState extends State<MyApp> {
             checkingStatus = CheckingStatus.CHECKING;
           });
           widget.zsdk
-              .checkPrinterStatusOverTCPIP(
+              .checkPrinterStatusOverBluetooth(
             address: addressIpController.text,
-            port: int.tryParse(addressPortController.text),
           )
               .then((value) {
             setState(() {
@@ -1226,9 +1221,8 @@ class _MyAppState extends State<MyApp> {
             printStatus = PrintStatus.PRINTING;
           });
           widget.zsdk
-              .printConfigurationLabelOverTCPIP(
+              .printConfigurationLabelOverBluetooth(
             address: addressIpController.text,
-            port: int.tryParse(addressPortController.text),
           )
               .then((value) {
             setState(() {
@@ -1258,7 +1252,7 @@ class _MyAppState extends State<MyApp> {
             });
           });
           break;
-        case btnPrintPdfFileOverTCPIP:
+        case btnPrintPdfFileOverBluetooth:
           if (Platform.isIOS) throw Exception("Not implemented for iOS");
           if (!pathController.text.endsWith(".pdf")) {
             throw Exception(
@@ -1269,10 +1263,9 @@ class _MyAppState extends State<MyApp> {
             printStatus = PrintStatus.PRINTING;
           });
           widget.zsdk
-              .printPdfFileOverTCPIP(
+              .printPdfFileOverBluetooth(
                   filePath: pathController.text,
                   address: addressIpController.text,
-                  port: int.tryParse(addressPortController.text),
                   printerConf: Printer.PrinterConf(
                     cmWidth: double.tryParse(widthController.text),
                     cmHeight: double.tryParse(heightController.text),
@@ -1307,7 +1300,7 @@ class _MyAppState extends State<MyApp> {
             });
           });
           break;
-        case btnPrintZplFileOverTCPIP:
+        case btnPrintZplFileOverBluetooth:
           if (filePath == null && !pathController.text.endsWith(".zpl")) {
             throw Exception(
                 "Make sure you properly write the path or selected a proper zpl file");
@@ -1325,10 +1318,9 @@ class _MyAppState extends State<MyApp> {
             printStatus = PrintStatus.PRINTING;
           });
           widget.zsdk
-              .printZplDataOverTCPIP(
+              .printZplDataOverBluetooth(
                   data: zplData!,
                   address: addressIpController.text,
-                  port: int.tryParse(addressPortController.text),
                   printerConf: Printer.PrinterConf(
                     cmWidth: double.tryParse(widthController.text),
                     cmHeight: double.tryParse(heightController.text),
@@ -1363,7 +1355,7 @@ class _MyAppState extends State<MyApp> {
             });
           });
           break;
-        case btnPrintZplDataOverTCPIP:
+        case btnPrintZplDataOverBluetooth:
           zplData = zplDataController.text;
           if (zplData == null || zplData!.isEmpty) {
             throw Exception("ZPL data can't be empty");
@@ -1373,10 +1365,9 @@ class _MyAppState extends State<MyApp> {
             printStatus = PrintStatus.PRINTING;
           });
           widget.zsdk
-              .printZplDataOverTCPIP(
+              .printZplDataOverBluetooth(
                   data: zplData!,
                   address: addressIpController.text,
-                  port: int.tryParse(addressPortController.text),
                   printerConf: Printer.PrinterConf(
                     cmWidth: double.tryParse(widthController.text),
                     cmHeight: double.tryParse(heightController.text),
