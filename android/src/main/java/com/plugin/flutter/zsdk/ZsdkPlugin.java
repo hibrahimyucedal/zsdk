@@ -126,7 +126,7 @@ public class ZsdkPlugin implements FlutterPlugin, MethodCallHandler {
               call.argument(_address)
           );
           case _PRINT_IMAGE_OVER_BLUETOOTH:
-          printer.printPdfOverBluetooth(
+          printer.printImageOverBluetooth(
               call.argument(_bytes),
               call.argument(_address)
           );
