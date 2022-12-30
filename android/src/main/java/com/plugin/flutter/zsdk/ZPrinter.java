@@ -5,8 +5,7 @@ import android.os.Handler;
 import android.util.Log;
 import android.graphics.BitmapFactory;
 import android.graphics.Bitmap;
-import java.util.Base64;
-
+import android.util.Base64;
 
 import com.zebra.sdk.comm.ConnectionA;
 import com.zebra.sdk.comm.ConnectionException;
@@ -308,8 +307,9 @@ public class ZPrinter
                     printer = ZebraPrinterFactory.getInstance(connection);
                     if (isReadyToPrint(printer)) {
                         init(connection);
-                        byte[] decodedImageBytes = java.util.Base64.getDecoder().decode(base64);
-                        Bitmap bitmap = BitmapFactory.decodeByteArray(decodedImageBytes, 0, decodedImageBytes.length);
+                        byte[] decodedString = android.util.Base64.decode(base64, android.util.Base64.DEFAULT);
+                        // Bitmap Image
+                        Bitmap bitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
                         ZebraImageAndroid image = new ZebraImageAndroid(bitmap);
                         image.scaleImage(700,400);
 
