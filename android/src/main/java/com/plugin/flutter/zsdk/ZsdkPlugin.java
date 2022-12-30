@@ -87,10 +87,9 @@ public class ZsdkPlugin implements FlutterPlugin, MethodCallHandler {
           channel,
           result,
           new PrinterConf(
-              call.argument(_cmWidth),
-              call.argument(_cmHeight),
-              call.argument(_dpi),
-              Orientation.getValueOfName(call.argument(_orientation))
+              cmWidth:7,
+              cmHeight:4,
+              dpi:200
           )
       );
       switch(call.method){
