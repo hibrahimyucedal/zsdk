@@ -308,7 +308,7 @@ public class ZPrinter
                     printer = ZebraPrinterFactory.getInstance(connection);
                     if (isReadyToPrint(printer)) {
                         init(connection);
-                        byte[] decodedImageBytes = Base64.getDecoder().decode(base64);
+                        byte[] decodedImageBytes = java.util.Base64.getDecoder().decode(base64);
                         Bitmap bitmap = BitmapFactory.decodeByteArray(decodedImageBytes, 0, decodedImageBytes.length);
                         ZebraImageAndroid image = new ZebraImageAndroid(bitmap);
 
