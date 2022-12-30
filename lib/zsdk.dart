@@ -53,7 +53,7 @@ class ZSDK {
   static const String _filePath = "filePath";
   static const String _data = "data";
   static const String _address = "address";
-  static const String _bytes = "bytes";
+  static const String _base64 = "base64";
   static const String _cmWidth = "cmWidth";
   static const String _cmHeight = "cmHeight";
   static const String _orientation = "orientation";
@@ -156,14 +156,14 @@ class ZSDK {
           printerConf: printerConf,
           timeout: timeout);
 
-          Future printImageOverBluetooth(
-          {required List<int> bytes,
+  Future printImageOverBluetooth(
+          {required String base64,
           required String address,
           PrinterConf? printerConf,
           Duration? timeout}) =>
       _printImageOverBluetooth(
           method: _PRINT_IMAGE_OVER_BLUETOOTH,
-          bytes: bytes,
+          base64: base64,
           address: address,
           printerConf: printerConf,
           timeout: timeout);
@@ -182,12 +182,12 @@ class ZSDK {
 
   Future _printImageOverBluetooth(
           {required method,
-          required List<int> bytes,
+          required String base64,
           required String address,
           PrinterConf? printerConf,
           Duration? timeout}) =>
       _channel.invokeMethod(method, {
-        _bytes: bytes,
+        _base64: base64,
         _address: address,
         _cmWidth: printerConf?.cmWidth,
         _cmHeight: printerConf?.cmHeight,

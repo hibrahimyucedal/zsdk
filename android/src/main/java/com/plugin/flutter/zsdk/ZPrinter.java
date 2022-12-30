@@ -5,6 +5,8 @@ import android.os.Handler;
 import android.util.Log;
 import android.graphics.BitmapFactory;
 import android.graphics.Bitmap;
+import java.util.Base64;
+
 
 import com.zebra.sdk.comm.ConnectionA;
 import com.zebra.sdk.comm.ConnectionException;
@@ -293,7 +295,7 @@ public class ZPrinter
         }).start();
     }
 
-    public void printImageOverBluetooth(final byte[] bytes, final String address) {
+    public void printImageOverBluetooth(final String base64, final String address) {
         new Thread(() -> {
             ConnectionA connection;
             ZebraPrinter printer = null;
@@ -306,8 +308,8 @@ public class ZPrinter
                     printer = ZebraPrinterFactory.getInstance(connection);
                     if (isReadyToPrint(printer)) {
                         init(connection);
-                        BitmapFactory factory = new BitmapFactory();
-                        Bitmap bitmap = factory.decodeByteArray(bytes, 0, bytes.length);
+                        byte[] bytes = Base64.getEncoder().encode(base64.getBytes());
+                        Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
                         ZebraImageAndroid image = new ZebraImageAndroid(bitmap);
 
                         printer.printImage(image, 0, 0, -1, -1, false);

@@ -58,7 +58,7 @@ public class ZsdkPlugin implements FlutterPlugin, MethodCallHandler {
   static final String _filePath = "filePath";
   static final String _data = "data";
   static final String _address = "address";
-  static final String _bytes = "bytes";
+  static final String _base64 = "base64";
   static final String _cmWidth = "cmWidth";
   static final String _cmHeight = "cmHeight";
   static final String _orientation = "orientation";
@@ -125,12 +125,12 @@ public class ZsdkPlugin implements FlutterPlugin, MethodCallHandler {
               call.argument(_filePath),
               call.argument(_address)
           );
-          case _PRINT_IMAGE_OVER_BLUETOOTH:
-          printer.printImageOverBluetooth(
-              call.argument(_bytes),
-              call.argument(_address)
-          );
-          break;
+        case _PRINT_IMAGE_OVER_BLUETOOTH:
+        printer.printImageOverBluetooth(
+            call.argument(_base64),
+            call.argument(_address)
+        );
+        break;
         case _PRINT_ZPL_FILE_OVER_BLUETOOTH:
           printer.printZplFileOverBluetooth(
               call.argument(_filePath),
