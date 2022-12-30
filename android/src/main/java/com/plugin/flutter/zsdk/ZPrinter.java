@@ -311,7 +311,7 @@ public class ZPrinter
                         byte[] decodedImageBytes = java.util.Base64.getDecoder().decode(base64);
                         Bitmap bitmap = BitmapFactory.decodeByteArray(decodedImageBytes, 0, decodedImageBytes.length);
                         ZebraImageAndroid image = new ZebraImageAndroid(bitmap);
-                        image.scaleImage(7,4);
+                        image.scaleImage(700,400);
 
                         printer.printImage(image, 0, 0, -1, -1, false);
                         
