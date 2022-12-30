@@ -306,7 +306,7 @@ public class ZPrinter
                     printer = ZebraPrinterFactory.getInstance(connection);
                     if (isReadyToPrint(printer)) {
                         init(connection);
-                        var factory = new BitmapFactory();
+                        BitmapFactory factory = new BitmapFactory();
                         Bitmap bitmap = factory.decodeByteArray(bytes, 0, bytes.length);
                         ZebraImageAndroid image = new ZebraImageAndroid(bitmap);
 
