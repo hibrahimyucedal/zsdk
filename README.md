@@ -1,4 +1,4 @@
-# zsdk
+# zsdk - Bluetooth
 
 ### Fork of https://github.com/luis901101/zsdk
 
