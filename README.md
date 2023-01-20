@@ -1,5 +1,7 @@
 # zsdk
 
+### Fork of https://github.com/luis901101/zsdk
+
 ### Zebra Link OS SDK Flutter plugin.
 This is a flutter plugin for the Link-OS Multiplatform SDK for [Zebra](https://www.zebra.com/ap/en/support-downloads/printer-software/link-os-multiplatform-sdk.html)
 
@@ -14,7 +16,8 @@ This is a flutter plugin for the Link-OS Multiplatform SDK for [Zebra](https://w
 - Check printer status
 - Print configuration label
 
-**Currently this plugin only supports TCP/IP connection to the Printer.** 
+**Currently this plugin only supports Bluetooth connection to the Printer.** 
+** It tested on Zebra ZQ520 **
 
 ### iOS Setup
 ```yaml
@@ -45,7 +48,7 @@ final zsdk = ZSDK();
 
 ### Start the printer calibration
 ```dart
-zsdk.doManualCalibrationOverTCPIP(
+zsdk.doManualCalibrationOverBluetooth(
   address: '10.0.0.100', 
   port: 9100 //optional
 )
@@ -53,9 +56,8 @@ zsdk.doManualCalibrationOverTCPIP(
 
 ### Get printer settings
 ```dart
-zsdk.getPrinterSettingsOverTCPIP(
-  address: '10.0.0.100', 
-  port: 9100 //optional
+zsdk.getPrinterSettingsOverBluetooth(
+  address: 'Mac Address', 
 ).then(value) {
  final printerSettings = PrinterResponse.fromMap(value).settings;
 };
@@ -63,9 +65,8 @@ zsdk.getPrinterSettingsOverTCPIP(
 
 ### Set printer settings
 ```dart
-zsdk.setPrinterSettingsOverTCPIP(
-  address: '10.0.0.100', 
-  port: 9100, //optional
+zsdk.setPrinterSettingsOverBluetooth(
+  address: 'Mac Address', 
   settings: PrinterSettings(
     darkness: 10,
     printSpeed: 6,
@@ -97,9 +98,8 @@ zsdk.setPrinterSettingsOverTCPIP(
 
 ### Reset printer settings
 ```dart
-zsdk.setPrinterSettingsOverTCPIP(
-  address: '10.0.0.100', 
-  port: 9100, //optional
+zsdk.setPrinterSettingsOverBluetooth(
+  address: 'Mac Address', 
   settings: PrinterSettings.defaultSettings()
 ).then(value) {
    final printerResponse = PrinterResponse.fromMap(value);
@@ -115,9 +115,8 @@ zsdk.setPrinterSettingsOverTCPIP(
 
 ### Check printer status
 ```dart
-zsdk.checkPrinterStatusOverTCPIP(
-  address: '10.0.0.100', 
-  port: 9100, //optional
+zsdk.checkPrinterStatusOverBluetooth(
+  address: 'Mac Address', 
 ).then(value) {
    final printerResponse = PrinterResponse.fromMap(value);
    Status status = printerResponse.statusInfo.status;
@@ -133,10 +132,9 @@ zsdk.checkPrinterStatusOverTCPIP(
 
 ### Print zpl file
 ```dart
-zsdk.printZplFileOverTCPIP(
+zsdk.printZplFileOverBluetooth(
   filePath: '/path/to/file.pdf',
-  address: '10.0.0.100', 
-  port: 9100, //optional
+  address: 'Mac Address', 
 ).then(value) {
    final printerResponse = PrinterResponse.fromMap(value);
    Status status = printerResponse.statusInfo.status;
@@ -152,10 +150,9 @@ zsdk.printZplFileOverTCPIP(
 
 ### Print zpl data
 ```dart
-zsdk.printZplDataOverTCPIP(
+zsdk.printZplDataOverBluetooth(
   data: '^XA^FO17,16^GB379,371,8^FS^FT65,255^A0N,135,134^FDTEST^FS^XZ',
-  address: '10.0.0.100', 
-  port: 9100, //optional
+  address: 'Mac Address', 
 ).then(value) {
    final printerResponse = PrinterResponse.fromMap(value);
    Status status = printerResponse.statusInfo.status;
@@ -171,10 +168,26 @@ zsdk.printZplDataOverTCPIP(
 
 ### Print pdf file (only Android)
 ```dart
-zsdk.printPdfFileOverTCPIP(
+zsdk.printPdfFileOverBluetooth(
+  base64: 'base64 image',
+  address: 'Mac Address', 
+).then(value) {
+   final printerResponse = PrinterResponse.fromMap(value);
+   Status status = printerResponse.statusInfo.status;
+   print(status);
+   if(printerResponse.errorCode == ErrorCode.SUCCESS) {
+     //Do something 
+   } else {
+     Cause cause = printerResponse.statusInfo.cause;
+     print(cause);
+   }
+ }
+ 
+ ### Print Image (only Android)
+```dart
+zsdk.printImageOverBluetooth(
   filePath: '/path/to/file.pdf',
-  address: '10.0.0.100', 
-  port: 9100, //optional
+  address: 'Mac Address', 
 ).then(value) {
    final printerResponse = PrinterResponse.fromMap(value);
    Status status = printerResponse.statusInfo.status;
@@ -192,7 +205,4 @@ zsdk.printPdfFileOverTCPIP(
 *Check the example code for more details*
 
 ### Tested Zebra Devices
-- Zebra ZT411 
-- Zebra ZD500 Series
-- ZD620
-- ZQ620
+- Zebra ZQ520
